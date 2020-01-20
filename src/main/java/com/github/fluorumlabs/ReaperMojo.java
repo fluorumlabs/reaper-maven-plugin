@@ -29,9 +29,7 @@ import java.io.IOException;
 
 /**
  * Goal which starts a HTTP server that will terminate maven process on request.
- *
- * @goal kill
- */
+ **/
 @Mojo(name = "kill",
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME)
