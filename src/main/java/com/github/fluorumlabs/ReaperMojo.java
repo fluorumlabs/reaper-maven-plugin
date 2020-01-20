@@ -1,8 +1,6 @@
 package com.github.fluorumlabs;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,10 +28,9 @@ import org.takes.tk.TkWithType;
 import java.io.IOException;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which starts a HTTP server that will terminate maven process on request.
  *
- * @goal touch
- * @phase process-sources
+ * @goal kill
  */
 @Mojo(name = "kill",
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
@@ -49,7 +46,6 @@ public class ReaperMojo
 
     public void execute()
             throws MojoExecutionException {
-        getLog().info("INCOMING REQUEST TO PORT "+port+" WILL END THIS MAVEN PROCESS");
         new Thread(this::runReaperServer).start();
     }
 
@@ -58,12 +54,15 @@ public class ReaperMojo
             new FtBasic(new TkFork(
                     new FkRegex(".*",
                             new TkWithType(req -> {
+                                getLog().info("\n\nTERMINATING PROCESS DUE TO INCOMING HTTP REQUEST TO PORT " + port + "\n\n");
+
                                 System.exit(0);
                                 return new RsWithBody("OK");
                             }, "text/plain"))
             ), port).start(() -> false);
+            getLog().info("INCOMING HTTP REQUEST TO PORT " + port + " WILL END THIS MAVEN PROCESS");
         } catch (IOException e) {
-            getLog().error("Error starting development server", e);
+            getLog().error("Error starting reaper:kill server", e);
         }
     }
 
