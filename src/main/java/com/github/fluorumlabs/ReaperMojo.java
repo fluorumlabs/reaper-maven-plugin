@@ -39,12 +39,13 @@ public class ReaperMojo
      * Port to listen to. Any incoming HTTP request to this port will result in
      * JVM exit.
      */
-    @Parameter(defaultValue = "8989")
+    @Parameter(defaultValue = "8989", property = "reaper.port")
     private int port;
 
     public void execute()
             throws MojoExecutionException {
         new Thread(this::runReaperServer).start();
+        getLog().info("INCOMING HTTP REQUEST TO PORT " + port + " WILL END THIS MAVEN PROCESS");
     }
 
     private void runReaperServer() {
@@ -58,7 +59,6 @@ public class ReaperMojo
                                 return new RsWithBody("OK");
                             }, "text/plain"))
             ), port).start(() -> false);
-            getLog().info("INCOMING HTTP REQUEST TO PORT " + port + " WILL END THIS MAVEN PROCESS");
         } catch (IOException e) {
             getLog().error("Error starting reaper:kill server", e);
         }
